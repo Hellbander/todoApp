@@ -1,0 +1,10 @@
+var data = {
+	"1" : {
+		"text": "my first task",
+		"completed": "false"
+	},
+	"2" : {
+		"text": "my first task2",
+		"completed": "false"
+	}
+}
