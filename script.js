@@ -31,6 +31,8 @@ console.log(mydata);
 mydata["2"]["sss"] = "asd";
 console.log(mydata);*/
 var id = 1;
+var flag = 1;
+var myArray = [];
 
 document.addEventListener( "DOMContentLoaded", innit );
 
@@ -46,17 +48,45 @@ function innit () {
 	startingNote( data );
 }
 
-function deleteText ( listElement, evt ) {
+function deleteText ( listElement, data, evt ) {
 	evt.preventDefault();
 	listElement.remove();
+	delete data[listElement.id];
+	for ( var i = 0; i <= myArray.length - 1; i++ ) {
+			if ( myArray[i] === listElement.id )
+					myArray.splice( i, 1 );
+	}
 }
 
 function createFormButtons() {
-	var formTemplate;
-	
+	var formTemplate,
+	ulColors,
+	liColors,
+	divColors,
+	color;
+		 
+	ulColors = document.getElementById('colors');
+	liColors = ulColors.querySelectorAll ('.li-colors');
+	for ( var i = 0; i <= liColors.length - 1; i++ ) {
+		divColors = liColors[i].querySelector('.div-colors');
+		if (divColors.style.width === "25px") {
+			color = divColors.id;
+			switch (color) {
+				case "purple":
+					color = "#BF81D2";
+					break;
+				case "yellow":
+					color = "#F7FE2E";
+					break;
+				case "blue":
+					color = "#5858FA";
+					break;
+			}
+		}
+	}
 	formTemplate = "<form class='check-delete'>";
 	formTemplate += "<input type='checkbox' class='checkBox'>";
-	formTemplate += "<button class='delete-button dispalay' type='delete'>X</button>";
+	formTemplate += "<button class='delete-button dispalay' type='delete' style='background-color:"+ color +"'>X</button>";
 	formTemplate += "</form>";
 	
 	return formTemplate;
@@ -75,7 +105,12 @@ function createDivParagraph ( data , id ) {
 function addTextToNote ( data ,id ) {
 	var listText = document.getElementById("list-text"),
 	liElement = document.createElement('LI'),
-	divFormText;
+	deleteAllBtn = document.getElementById("delete-all"),
+	myData = data[id.toString()],
+	divFormText,
+	checkBox,
+	btn,
+	paragrph;
 	
 	divFormText = "<div class='div-for-text'>";
 	divFormText += createDivParagraph( data, id );
@@ -85,23 +120,37 @@ function addTextToNote ( data ,id ) {
 	
 	liElement.id = id;
 	liElement.innerHTML = divFormText;
+	
 	listText.appendChild(liElement);
 	liElement = document.getElementById(id);
 	if (id>1){
-		var checkBox = liElement.querySelector('.checkBox');
-		var btn = liElement.querySelector('button');
-		var paragrph = liElement.querySelector('p');
+		checkBox = liElement.querySelector('.checkBox');
+		btn = liElement.querySelector('button');
+		paragrph = liElement.querySelector('p');
 		checkBox.addEventListener('change', function () {
 			if (checkBox.checked) {
 				liElement.querySelector('button').className = "delete-button";
 				paragrph.className = "done";
-				btn.addEventListener("click", deleteText.bind(this, liElement));
-				data[id.toString()].completed = "true";
+				btn.addEventListener("click", deleteText.bind(this, liElement, data) );
+				myData.completed = "true";
+				myArray.push( liElement.id );
 			} else {
 				btn.className += " dispalay";
 				paragrph.className = "";
-				data[id.toString()].completed = "false";
+				myData.completed = "false";
+				for ( var i = 0; i <= myArray.length - 1; i++ ) {
+					if ( myArray[i] === liElement.id )
+						myArray.splice( i, 1 );
+				}
 			}
+			deleteAllBtn.addEventListener("click", function () {
+				for ( var i = 0; i <= myArray.length - 1; i++ ) {
+						liElement = document.getElementById(myArray[i]);
+						liElement.remove();
+						delete data[liElement.id];
+				}
+				myArray = [];
+			});
 		});
 	}
 }
