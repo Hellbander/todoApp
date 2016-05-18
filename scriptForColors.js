@@ -32,13 +32,9 @@ function changeColor ( color, buttons, mainDiv, header ) {
 	for ( var i = 0; i <= liColors.length - 1; i++ ) {
 		divColors = liColors[i].querySelector('.div-colors');
 		if ( color.id !== divColors.id ) {
-			divColors.style.width = 20 + "px";
-			divColors.style.height = 20 + "px";	
-			divColors.style.borderWidth = 1 + "px";
+			divColors.className = "div-colors";
 		} else {
-			color.style.width = 25 + "px";
-			color.style.height = 25 + "px";
-			color.style.borderWidth = 2 + "px";
+			color.className = "div-colors active";
 		}
 	}
 	switch(colorId) {

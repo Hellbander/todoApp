@@ -69,7 +69,7 @@ function createFormButtons() {
 	liColors = ulColors.querySelectorAll ('.li-colors');
 	for ( var i = 0; i <= liColors.length - 1; i++ ) {
 		divColors = liColors[i].querySelector('.div-colors');
-		if (divColors.style.width === "25px") {
+		if (divColors.className === "div-colors active") {
 			color = divColors.id;
 			switch (color) {
 				case "purple":
