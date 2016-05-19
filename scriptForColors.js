@@ -24,8 +24,10 @@ function changeColor ( color, buttons, mainDiv, header ) {
 	var ulColors,
 	liColors,
 	divColors,
-	colorId;
+	colorId,
+	mainHeader;
 
+	mainHeader = document.getElementById('main-headder');
 	colorId = color.id;
 	ulColors = document.getElementById('colors');
 	liColors = ulColors.querySelectorAll ('.li-colors');
@@ -39,21 +41,27 @@ function changeColor ( color, buttons, mainDiv, header ) {
 	}
 	switch(colorId) {
 		case "purple":
-			buttons[0].style.backgroundColor = "#BF81D2";
-			buttons[1].style.backgroundColor = "#BF81D2";
+			for ( var i = 0; i <= buttons.length - 1; i++ ) {
+				buttons[i].style.backgroundColor = "#BF81D2";
+			}
 			header.style.backgroundColor = "#BF81D2";
+			mainHeader.style.textShadow = "3px 3px 10px #FFFFFF"; 
 			mainDiv.style.backgroundColor = "#DFB2EC";
 			break;
 		case "yellow":
-			buttons[0].style.backgroundColor = "#F7FE2E";
-			buttons[1].style.backgroundColor = "#F7FE2E";
+			for ( var i = 0; i <= buttons.length - 1; i++ ) {
+				buttons[i].style.backgroundColor = "#F7FE2E";
+			}
 			header.style.backgroundColor = "#F7FE2E";
+			mainHeader.style.textShadow = "3px 3px 10px #FE9A2E"; 
 			mainDiv.style.backgroundColor = "#F2F5A9";
 			break;
 		case "blue":
-			buttons[0].style.backgroundColor = "#5858FA";
-			buttons[1].style.backgroundColor = "#5858FA";
+			for ( var i = 0; i <= buttons.length - 1; i++ ) {
+				buttons[i].style.backgroundColor = "#5858FA";
+			}
 			header.style.backgroundColor = "#5858FA";
+			mainHeader.style.textShadow = "3px 3px 10px #00FFFF"; 
 			mainDiv.style.backgroundColor = "#A9A9F5";
 			break;
 	}

@@ -31,21 +31,47 @@ console.log(mydata);
 mydata["2"]["sss"] = "asd";
 console.log(mydata);*/
 var id = 1;
-var flag = 1;
 var myArray = [];
-
+ 
 document.addEventListener( "DOMContentLoaded", innit );
 
 function innit () {
-	var submite = document.getElementById( 'add-button' );
 	var data = {
 		"1" : {
 			"text": "Hello! Please add something:",
 			"completed": "false"
 		}
-	}
-	submite.addEventListener( "click", check.bind( this, data) );
+	}	
+	var submite = document.getElementById( 'add-button' ),
+	select = document.getElementById( 'day-selector' );
+	
+	submite.addEventListener( "click", check.bind( this, data ) );
+	select.addEventListener( "change", sortTextByDay.bind( this, data ) );
 	startingNote( data );
+}
+
+function sortTextByDay () {
+	var day,
+	ulElement,
+	listText;
+	
+	ulElement = document.getElementById("list-text");
+	listText = ulElement.querySelectorAll('li')
+	day = document.getElementById('day-selector').value;
+	for ( var i = 0; i <= listText.length - 1; i++ ) {
+		listText[i].remove();
+	}
+	
+	if ( day === "All" ) {
+		for ( var i = 1; i <= Object.keys(data).length; i++ ) {
+			addTextToNote(data, i);
+		}
+	} else{
+		for ( var i = 1; i <= Object.keys(data).length; i++ ) {
+			if (data[i.toString()].weekday === day)
+				addTextToNote(data, i);
+		}
+	}
 }
 
 function deleteText ( listElement, data, evt ) {
@@ -59,34 +85,11 @@ function deleteText ( listElement, data, evt ) {
 }
 
 function createFormButtons() {
-	var formTemplate,
-	ulColors,
-	liColors,
-	divColors,
-	color;
-		 
-	ulColors = document.getElementById('colors');
-	liColors = ulColors.querySelectorAll ('.li-colors');
-	for ( var i = 0; i <= liColors.length - 1; i++ ) {
-		divColors = liColors[i].querySelector('.div-colors');
-		if (divColors.className === "div-colors active") {
-			color = divColors.id;
-			switch (color) {
-				case "purple":
-					color = "#BF81D2";
-					break;
-				case "yellow":
-					color = "#F7FE2E";
-					break;
-				case "blue":
-					color = "#5858FA";
-					break;
-			}
-		}
-	}
+	var formTemplate;
+	
 	formTemplate = "<form class='check-delete'>";
 	formTemplate += "<input type='checkbox' class='checkBox'>";
-	formTemplate += "<button class='delete-button dispalay' type='delete' style='background-color:"+ color +"'>X</button>";
+	formTemplate += "<button class='delete-button dispalay' type='delete'>X</button>";
 	formTemplate += "</form>";
 	
 	return formTemplate;
@@ -96,7 +99,7 @@ function createDivParagraph ( data , id ) {
 	var divParagraphTemplate;
 	
 	divParagraphTemplate = "<div class='div-paragraph'>";
-	divParagraphTemplate += "<p class=''>"+data[id].text+"</p>";
+	divParagraphTemplate += "<p class=''>"+data[id.toString()].text+"</p>";
 	divParagraphTemplate += "</div>";
 	
 	return divParagraphTemplate;
@@ -157,15 +160,26 @@ function addTextToNote ( data ,id ) {
 
 function check ( data, e ) {
 	e.preventDefault();
-	var text = document.getElementById('input-text').value;
-	if (text !== "")
-		save (text, "false")	
+	var text,
+	day;
+	
+	day = document.getElementById('day-selector').value;
+	text = document.getElementById('input-text').value;
+	if ( text !== "" & day !== "All" )
+		save ( text, "false", day )
+	else if ( text === "" & day === "All" )
+		alert('Please enter text and correct day');
+	else if ( text === "" )
+		alert('Please enter correct text');
+	else if ( day === "All" )
+		alert('Please enter correct day');
 } 
 
-function save ( msg, checked ) {
+function save ( msg, checked, day ) {
 	var tempData = {
 		"text": msg,
-		"completed": checked
+		"completed": checked,
+		"weekday": day
    }
 	
 	data[id.toString()] = tempData;
@@ -179,6 +193,6 @@ function startingNote( data ) {
 	for ( var i = 1; i <= Object.keys(data).length; i++ ) {
 		addTextToNote(data, id);
 		id = id + 1;
-	}
+	} 
 }
 
