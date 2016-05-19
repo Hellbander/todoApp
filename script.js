@@ -58,16 +58,16 @@ function sortTextByDay () {
 	ulElement = document.getElementById("list-text");
 	listText = ulElement.querySelectorAll('li')
 	day = document.getElementById('day-selector').value;
-	for ( var i = 0; i <= listText.length - 1; i++ ) {
+	for ( var i = 1; i <= listText.length - 1; i++ ) {
 		listText[i].remove();
 	}
 	
 	if ( day === "All" ) {
-		for ( var i = 1; i <= Object.keys(data).length; i++ ) {
+		for ( var i = 2; i <= Object.keys(data).length; i++ ) {
 			addTextToNote(data, i);
 		}
 	} else{
-		for ( var i = 1; i <= Object.keys(data).length; i++ ) {
+		for ( var i = 2; i <= Object.keys(data).length; i++ ) {
 			if (data[i.toString()].weekday === day)
 				addTextToNote(data, i);
 		}
