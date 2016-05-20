@@ -37,39 +37,60 @@ document.addEventListener( "DOMContentLoaded", innit );
 
 function innit () {
 	var data = {
-		"1" : {
-			"text": "Hello! Please add something:",
-			"completed": "false"
-		}
+		
 	}	
 	var submite = document.getElementById( 'add-button' ),
 	select = document.getElementById( 'day-selector' );
 	
 	submite.addEventListener( "click", check.bind( this, data ) );
 	select.addEventListener( "change", sortTextByDay.bind( this, data ) );
-	startingNote( data );
+	//startingNote( data );
 }
 
-function sortTextByDay () {
+function sortTextByDay ( data ) {
 	var day,
 	ulElement,
-	listText;
+	listText,
+	btn,
+	checkBox,
+	paragraph;
 	
 	ulElement = document.getElementById("list-text");
 	listText = ulElement.querySelectorAll('li')
 	day = document.getElementById('day-selector').value;
-	for ( var i = 1; i <= listText.length - 1; i++ ) {
+	for ( var i = 0; i <= listText.length - 1; i++ ) {
 		listText[i].remove();
 	}
-	
-	if ( day === "All" ) {
-		for ( var i = 2; i <= Object.keys(data).length; i++ ) {
-			addTextToNote(data, i);
-		}
-	} else{
-		for ( var i = 2; i <= Object.keys(data).length; i++ ) {
-			if (data[i.toString()].weekday === day)
-				addTextToNote(data, i);
+	if ( Object.keys(data).length !== 0 ) {
+		if ( day === "All" ) {
+			for ( var i = 0; i <= Object.keys(data).length -1; i++ ) {
+				listText = addTextToNote( data, parseInt(Object.keys(data)[i]) );
+				if ( data[parseInt(Object.keys(data)[i])].completed === "true" ) {
+					btn = listText.querySelector('button');
+					btn.className = "delete-button";
+					listText.querySelector('p').className = "done";
+					btn.addEventListener("click", deleteText.bind(this, listText, data) );
+					checkBox = listText.querySelector('.checkBox');
+					checkBox.checked = "true";
+					changeColorToButtonsAfterAdd( listText, btn );
+					
+				}
+			}
+		} else{
+			for ( var i = 0; i <= Object.keys(data).length -1; i++ ) {
+				if ( data[parseInt(Object.keys(data)[i])].weekday === day ) {
+					listText = addTextToNote( data, parseInt(Object.keys(data)[i]) );
+					if ( data[parseInt(Object.keys(data)[i])].completed === "true" ) {
+						btn = listText.querySelector('button');
+						btn.className = "delete-button";
+						listText.querySelector('p').className = "done";
+						btn.addEventListener("click", deleteText.bind(this, listText, data) );
+						checkBox = listText.querySelector('.checkBox');
+						checkBox.checked = "true";
+						changeColorToButtonsAfterAdd( listText, btn );
+					}
+				}
+			}
 		}
 	}
 }
@@ -78,6 +99,8 @@ function deleteText ( listElement, data, evt ) {
 	evt.preventDefault();
 	listElement.remove();
 	delete data[listElement.id];
+	if ( Object.keys(data).length === 0 )
+			id = 1;
 	for ( var i = 0; i <= myArray.length - 1; i++ ) {
 			if ( myArray[i] === listElement.id )
 					myArray.splice( i, 1 );
@@ -99,7 +122,7 @@ function createDivParagraph ( data , id ) {
 	var divParagraphTemplate;
 	
 	divParagraphTemplate = "<div class='div-paragraph'>";
-	divParagraphTemplate += "<p class=''>"+data[id.toString()].text+"</p>";
+	divParagraphTemplate += "<p class=''>"+data[id].text+"</p>";
 	divParagraphTemplate += "</div>";
 	
 	return divParagraphTemplate;
@@ -113,49 +136,52 @@ function addTextToNote ( data ,id ) {
 	divFormText,
 	checkBox,
 	btn,
+	newLiElement,
 	paragrph;
 	
 	divFormText = "<div class='div-for-text'>";
 	divFormText += createDivParagraph( data, id );
-	if (id>1)
-		divFormText += createFormButtons();
+	divFormText += createFormButtons();
 	divFormText += "</div>";
 	
 	liElement.id = id;
 	liElement.innerHTML = divFormText;
 	
-	listText.appendChild(liElement);
-	liElement = document.getElementById(id);
-	if (id>1){
-		checkBox = liElement.querySelector('.checkBox');
-		btn = liElement.querySelector('button');
-		paragrph = liElement.querySelector('p');
-		checkBox.addEventListener('change', function () {
-			if (checkBox.checked) {
-				liElement.querySelector('button').className = "delete-button";
-				paragrph.className = "done";
-				btn.addEventListener("click", deleteText.bind(this, liElement, data) );
-				myData.completed = "true";
-				myArray.push( liElement.id );
-			} else {
-				btn.className += " dispalay";
-				paragrph.className = "";
-				myData.completed = "false";
-				for ( var i = 0; i <= myArray.length - 1; i++ ) {
-					if ( myArray[i] === liElement.id )
-						myArray.splice( i, 1 );
-				}
+	listText.appendChild( liElement );
+	newLiElement = document.getElementById(id);
+
+	checkBox = newLiElement.querySelector('.checkBox');
+	btn = newLiElement.querySelector('button');
+	paragrph = newLiElement.querySelector('p');
+	checkBox.addEventListener('change', function () {
+		if (checkBox.checked) {
+			newLiElement.querySelector('button').className = "delete-button";
+			changeColorToButtonsAfterAdd( newLiElement, btn );
+			paragrph.className = "done";
+			btn.addEventListener("click", deleteText.bind(this, newLiElement, data) );
+			myData.completed = "true";
+			myArray.push( newLiElement.id );
+		} else {
+			btn.className += " dispalay";
+			paragrph.className = "";
+			myData.completed = "false";
+			for ( var i = 0; i <= myArray.length - 1; i++ ) {
+				if ( myArray[i] === newLiElement.id )
+					myArray.splice( i, 1 );
 			}
-			deleteAllBtn.addEventListener("click", function () {
-				for ( var i = 0; i <= myArray.length - 1; i++ ) {
-						liElement = document.getElementById(myArray[i]);
-						liElement.remove();
-						delete data[liElement.id];
-				}
-				myArray = [];
-			});
-		});
-	}
+		}
+		deleteAllBtn.addEventListener("click", function () {
+			for ( var i = 0; i <= myArray.length - 1; i++ ) {
+					newLiElement = document.getElementById(myArray[i]);
+					newLiElement.remove();
+					delete data[newLiElement.id];
+			}
+			myArray = [];
+			if ( Object.keys(data).length === 0 )
+				id = 1;
+ 		});
+	});
+	return newLiElement;
 }
 
 function check ( data, e ) {
@@ -166,7 +192,7 @@ function check ( data, e ) {
 	day = document.getElementById('day-selector').value;
 	text = document.getElementById('input-text').value;
 	if ( text !== "" & day !== "All" )
-		save ( text, "false", day )
+		save ( text, "false", day, data )
 	else if ( text === "" & day === "All" )
 		alert('Please enter text and correct day');
 	else if ( text === "" )
@@ -175,7 +201,7 @@ function check ( data, e ) {
 		alert('Please enter correct day');
 } 
 
-function save ( msg, checked, day ) {
+function save ( msg, checked, day, data ) {
 	var tempData = {
 		"text": msg,
 		"completed": checked,
