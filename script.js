@@ -57,10 +57,23 @@ function sortArray ( data, searchValue ) {
 	
 	for ( var i = 0; i <= Object.keys(data).length -1; i++ ) {
 		dataText = data[parseInt(Object.keys(data)[i])].text;
-		if ( dataText.search(searchValue.value) !== -1 ) 
+		if ( dataText.toLowerCase().search(searchValue.value.toLowerCase()) !== -1 ) 
 			newData[(Object.keys(data)[i]).toString()] = data[parseInt(Object.keys(data)[i])];
 	}
 	return newData;
+}
+
+function changesAfterAdd ( data, listText ) {
+	var btn,
+	checkBox;
+	
+	btn = listText.querySelector('button');
+	btn.className = "delete-button";
+	listText.querySelector('p').className = "done";
+	btn.addEventListener("click", deleteText.bind(this, listText, data) );
+	checkBox = listText.querySelector('.checkBox');
+	checkBox.checked = "true";
+	changeColorToButtonsAfterAdd( listText, btn );
 }
 
 function sortTextBySearch ( data, searchValue, evt ) {
@@ -85,8 +98,6 @@ function sortTextByDay ( data, searchValue ) {
 	var day,
 	ulElement,
 	listText,
-	btn,
-	checkBox,
 	dataText,
 	paragraph;
 	var newData = {}
@@ -106,13 +117,7 @@ function sortTextByDay ( data, searchValue ) {
 				for ( var i = 0; i <= Object.keys(data).length -1; i++ ) {
 					listText = addTextToNote( data, parseInt(Object.keys(data)[i]) );
 					if ( data[parseInt(Object.keys(data)[i])].completed === "true" ) {
-						btn = listText.querySelector('button');
-						btn.className = "delete-button";
-						listText.querySelector('p').className = "done";
-						btn.addEventListener("click", deleteText.bind(this, listText, data) );
-						checkBox = listText.querySelector('.checkBox');
-						checkBox.checked = "true";
-						changeColorToButtonsAfterAdd( listText, btn );
+						changesAfterAdd( data, listText );
 					}
 				}
 			} else{
@@ -120,13 +125,7 @@ function sortTextByDay ( data, searchValue ) {
 					if ( data[parseInt(Object.keys(data)[i])].weekday === day ) {
 						listText = addTextToNote( data, parseInt(Object.keys(data)[i]) );
 						if ( data[parseInt(Object.keys(data)[i])].completed === "true" ) {
-							btn = listText.querySelector('button');
-							btn.className = "delete-button";
-							listText.querySelector('p').className = "done";
-							btn.addEventListener("click", deleteText.bind(this, listText, data) );
-							checkBox = listText.querySelector('.checkBox');
-							checkBox.checked = "true";
-							changeColorToButtonsAfterAdd( listText, btn );
+							changesAfterAdd( data, listText );
 						}
 					}
 				}
@@ -140,13 +139,7 @@ function sortTextByDay ( data, searchValue ) {
 					listText = addTextToNote( newData, parseInt(Object.keys(newData)[i]) );
 				
 					if ( data[parseInt(Object.keys(newData)[i])].completed === "true" ) {
-						btn = listText.querySelector('button');
-						btn.className = "delete-button";
-						listText.querySelector('p').className = "done";
-						btn.addEventListener("click", deleteText.bind(this, listText, newData) );
-						checkBox = listText.querySelector('.checkBox');
-						checkBox.checked = "true";
-						changeColorToButtonsAfterAdd( listText, btn );
+						changesAfterAdd( newData, listText );
 					}
 				}
 			} else{
@@ -154,13 +147,7 @@ function sortTextByDay ( data, searchValue ) {
 					if ( newData[parseInt(Object.keys(newData)[i])].weekday === day ) {
 						listText = addTextToNote( newData, parseInt(Object.keys(newData)[i]) );
 						if ( newData[parseInt(Object.keys(newData)[i])].completed === "true" ) {
-							btn = listText.querySelector('button');
-							btn.className = "delete-button";
-							listText.querySelector('p').className = "done";
-							btn.addEventListener("click", deleteText.bind(this, listText, newData) );
-							checkBox = listText.querySelector('.checkBox');
-							checkBox.checked = "true";
-							changeColorToButtonsAfterAdd( listText, btn );
+							changesAfterAdd( newData, listText );
 						}
 					}
 				}
