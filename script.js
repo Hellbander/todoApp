@@ -24,9 +24,9 @@ var sample = {
 http_request.open("POST", url, sample, true);
 http_request.send(null);
 http_request.open("GET", url, true);
-http_request.send(null);*/
+http_request.send(null);
 
-/*var mydata = data;
+var mydata = data;
 console.log(mydata);
 mydata["2"]["sss"] = "asd";
 console.log(mydata);*/
@@ -40,45 +40,70 @@ function innit () {
 		
 	}	
 	var submite = document.getElementById( 'add-button' ),
-	select = document.getElementById( 'day-selector' );
+	select = document.getElementById( 'day-selector' ),
+	search = document.getElementById( 'input-search' );
 	
 	submite.addEventListener( "click", check.bind( this, data ) );
-	select.addEventListener( "change", sortTextByDay.bind( this, data ) );
+	select.addEventListener( "change", sortTextByDay.bind( this, data, search ) );
+	search.addEventListener( "input", sortTextBySearch.bind( this, data, search ) );
 	//startingNote( data );
 }
 
-function sortTextByDay ( data ) {
+function sortArray ( data, searchValue ) {
+	var dataText;
+	var newData = {
+		
+	}
+	
+	for ( var i = 0; i <= Object.keys(data).length -1; i++ ) {
+		dataText = data[parseInt(Object.keys(data)[i])].text;
+		if ( dataText.search(searchValue.value) !== -1 ) 
+			newData[(Object.keys(data)[i]).toString()] = data[parseInt(Object.keys(data)[i])];
+	}
+	return newData;
+}
+
+function sortTextBySearch ( data, searchValue, evt ) {
+	evt.preventDefault();
+	
+	var ulElement,
+	day,
+	listText;
+	
+	day = document.getElementById('day-selector').value;
+	ulElement = document.getElementById("list-text");
+	listText = ulElement.querySelectorAll('li');
+	
+	for ( var i = 0; i <= listText.length - 1; i++ ) {
+		listText[i].remove();
+	}
+	sortTextByDay( data, searchValue );
+	
+}
+
+function sortTextByDay ( data, searchValue ) {
 	var day,
 	ulElement,
 	listText,
 	btn,
 	checkBox,
+	dataText,
 	paragraph;
+	var newData = {}
 	
 	ulElement = document.getElementById("list-text");
-	listText = ulElement.querySelectorAll('li')
+	listText = ulElement.querySelectorAll('li');
 	day = document.getElementById('day-selector').value;
+	
 	for ( var i = 0; i <= listText.length - 1; i++ ) {
 		listText[i].remove();
 	}
+	
 	if ( Object.keys(data).length !== 0 ) {
-		if ( day === "All" ) {
-			for ( var i = 0; i <= Object.keys(data).length -1; i++ ) {
-				listText = addTextToNote( data, parseInt(Object.keys(data)[i]) );
-				if ( data[parseInt(Object.keys(data)[i])].completed === "true" ) {
-					btn = listText.querySelector('button');
-					btn.className = "delete-button";
-					listText.querySelector('p').className = "done";
-					btn.addEventListener("click", deleteText.bind(this, listText, data) );
-					checkBox = listText.querySelector('.checkBox');
-					checkBox.checked = "true";
-					changeColorToButtonsAfterAdd( listText, btn );
-					
-				}
-			}
-		} else{
-			for ( var i = 0; i <= Object.keys(data).length -1; i++ ) {
-				if ( data[parseInt(Object.keys(data)[i])].weekday === day ) {
+		if ( searchValue.value === "" ) {
+/*--------------Without search--------------*/
+			if ( day === "All" ) {
+				for ( var i = 0; i <= Object.keys(data).length -1; i++ ) {
 					listText = addTextToNote( data, parseInt(Object.keys(data)[i]) );
 					if ( data[parseInt(Object.keys(data)[i])].completed === "true" ) {
 						btn = listText.querySelector('button');
@@ -90,13 +115,64 @@ function sortTextByDay ( data ) {
 						changeColorToButtonsAfterAdd( listText, btn );
 					}
 				}
+			} else{
+				for ( var i = 0; i <= Object.keys(data).length -1; i++ ) {
+					if ( data[parseInt(Object.keys(data)[i])].weekday === day ) {
+						listText = addTextToNote( data, parseInt(Object.keys(data)[i]) );
+						if ( data[parseInt(Object.keys(data)[i])].completed === "true" ) {
+							btn = listText.querySelector('button');
+							btn.className = "delete-button";
+							listText.querySelector('p').className = "done";
+							btn.addEventListener("click", deleteText.bind(this, listText, data) );
+							checkBox = listText.querySelector('.checkBox');
+							checkBox.checked = "true";
+							changeColorToButtonsAfterAdd( listText, btn );
+						}
+					}
+				}
 			}
-		}
+	/*First end*/	
+		} else {
+/*--------------With search--------------*/
+			newData = sortArray ( data, searchValue );
+			if ( day === "All" ) {
+				for ( var i = 0; i <= Object.keys(newData).length -1; i++ ) {
+					listText = addTextToNote( newData, parseInt(Object.keys(newData)[i]) );
+				
+					if ( data[parseInt(Object.keys(newData)[i])].completed === "true" ) {
+						btn = listText.querySelector('button');
+						btn.className = "delete-button";
+						listText.querySelector('p').className = "done";
+						btn.addEventListener("click", deleteText.bind(this, listText, newData) );
+						checkBox = listText.querySelector('.checkBox');
+						checkBox.checked = "true";
+						changeColorToButtonsAfterAdd( listText, btn );
+					}
+				}
+			} else{
+				for ( var i = 0; i <= Object.keys(newData).length -1; i++ ) {
+					if ( newData[parseInt(Object.keys(newData)[i])].weekday === day ) {
+						listText = addTextToNote( newData, parseInt(Object.keys(newData)[i]) );
+						if ( newData[parseInt(Object.keys(newData)[i])].completed === "true" ) {
+							btn = listText.querySelector('button');
+							btn.className = "delete-button";
+							listText.querySelector('p').className = "done";
+							btn.addEventListener("click", deleteText.bind(this, listText, newData) );
+							checkBox = listText.querySelector('.checkBox');
+							checkBox.checked = "true";
+							changeColorToButtonsAfterAdd( listText, btn );
+						}
+					}
+				}
+			}
+	/*Second end*/
+		}	
 	}
 }
 
 function deleteText ( listElement, data, evt ) {
 	evt.preventDefault();
+	
 	listElement.remove();
 	delete data[listElement.id];
 	if ( Object.keys(data).length === 0 )
@@ -170,13 +246,19 @@ function addTextToNote ( data ,id ) {
 					myArray.splice( i, 1 );
 			}
 		}
-		deleteAllBtn.addEventListener("click", function () {
-			for ( var i = 0; i <= myArray.length - 1; i++ ) {
-					newLiElement = document.getElementById(myArray[i]);
-					newLiElement.remove();
-					delete data[newLiElement.id];
+		deleteAllBtn.addEventListener("click", function ( evt ) {
+			evt.preventDefault();
+			
+			newLiElement = listText.querySelectorAll('li');
+			for ( var i = 0; i <= newLiElement.length - 1; i++ ) {
+				for ( var j = 0; j <= myArray.length - 1; j++ ) {
+					if ( myArray[j] === newLiElement[i].id ) {
+						newLiElement[i].remove();
+						delete data[newLiElement[i].id];
+						myArray.splice( j, 1 );
+					}
+				}
 			}
-			myArray = [];
 			if ( Object.keys(data).length === 0 )
 				id = 1;
  		});

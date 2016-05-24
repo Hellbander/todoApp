@@ -50,7 +50,7 @@ body {
 #main-div {
 	background-color: #DFB2EC;
 	width: 30%;
-	min-height: 500px;
+	min-height: 530px;
 	margin: auto;
 	margin-top: 5%;
 	box-shadow: 6px 6px 56px 3px rgba(0,0,0,1);
@@ -92,8 +92,9 @@ button {
 	min-height: 350px;
 	margin: auto;
 	margin-top: 7%;
-	overflow-x: auto;
-	overflow-y: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
+	max-height: 355px;
 }
 #text-area ul li{
 	width: 97%;
@@ -153,6 +154,25 @@ p {
 #delete-all {
 	float: right;
 	margin-right: 2%;
+	margin-top: 6%;
+}
+
+#form-input-search {
+	float: left;
+	width: 100%;
+}
+
+#input-search {
+	width: 130px;
+   transition: width 0.4s ease-in-out;
+	border: 2px solid #6E6E6E;
+	border-radius: 5px;
+	margin-left: 2%;
+	margin-top: 6%;
+}
+
+#input-search:focus {
+	width: 55%;
 }
 
 #color-div {
